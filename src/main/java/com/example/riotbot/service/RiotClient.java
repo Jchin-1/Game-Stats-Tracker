@@ -116,4 +116,17 @@ public class RiotClient {
                 .retrieve()
                 .bodyToFlux(com.example.riotbot.dto.LeagueEntryDto.class);
     }
+
+    public Mono<String> getLatestDDragonVersion() {
+        return webClient.get()
+                .uri("https://ddragon.leagueoflegends.com/api/versions.json")
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(json -> {
+                    // Quick parse: ["14.1.1", ...] -> 14.1.1
+                    // Remove brackets and quotes, split by comma, take first
+                    String clean = json.replace("[", "").replace("]", "").replace("\"", "").trim();
+                    return clean.split(",")[0];
+                });
+    }
 }
